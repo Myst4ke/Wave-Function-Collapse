@@ -4,6 +4,7 @@ let path = ['js/asset/Void.png', 'js/asset/crossUp.png', 'js/asset/crossRight.pn
 let cellLeft = [];
 let finished = false;
 let counter = 0;
+
 let imageVoid = new Image();
 imageVoid.src = path[0];
 let imageUp = new Image();
@@ -28,31 +29,25 @@ let gridY = cnv.height / imageSize.y | 0;
 let gridsize = gridX * gridY;
 
 
-  
 class tile {
     constructor(pathIndex, borders) {
         this.pathIndex = pathIndex;
-        this.path = path[pathIndex];
         this.up = borders[0];
         this.right = borders[1];
         this.down = borders[2];
         this.left = borders[3];
     }
-    loadImage(){
-
-    }
     drawTile(x, y, w, h) {
-        //let img = new Image();
-        //img.src = this.path;
-        //let img = images[this.pathIndex];
         ctx.drawImage(images[this.pathIndex], x, y, w, h);
     }
 }
+
 let tileVoid = new tile(0, [0, 0, 0, 0]);
 let tileUp = new tile(1, [1, 1, 0, 1]);
 let tileRight = new tile(2, [1, 1, 1, 0]);
 let tileDown = new tile(3, [0, 1, 1, 1]);
 let tileLeft = new tile(4, [1, 0, 1, 1]);
+
 let tiles = [tileVoid, tileUp, tileRight, tileDown, tileLeft];
 
 class grid {
@@ -83,13 +78,13 @@ function randomPick(tab) {
 //return une des cellules (aléatoirement) parmis celle avec le moins d'entropie
 function minEntropy(grille){
     let min = 999;
-    for (let i = 0; i < grille.grille.length; i++) {
-        if (grille.grille[i].pickedTile == -1) {
-            if (grille.grille[i].options.length < min) {
-                min = grille.grille[i].options.length;
+    for (let i = 0; i < grille.length; i++) {
+        if (grille[i].pickedTile == -1) {
+            if (grille[i].options.length < min) {
+                min = grille[i].options.length;
                 cellLeft.splice(0);
                 cellLeft.push(i);
-            } else if (grille.grille[i].options.length == min) {
+            } else if (grille[i].options.length == min) {
                 cellLeft.push(i);
             }
         }
@@ -100,13 +95,13 @@ function minEntropy(grille){
     return random;
 }
 function collapse(grille) {
-        if (counter == grille.grille.length) {
+        if (counter == grille.length) {
             console.log("reset time !");
             finished = true;
         } else {
             let random = minEntropy(grille);
-            let selectedOption = randomPick(grille.grille[random].options);
-            grille.grille[random].pickedTile = selectedOption;
+            let selectedOption = randomPick(grille[random].options);
+            grille[random].pickedTile = selectedOption;
             reduceEntropy(random);
             counter++;
         }
@@ -155,7 +150,7 @@ function isCollapsed() {
 
 function draw() {
     if (!finished) {
-        collapse(grille1);
+        collapse(grille1.grille);
         isCollapsed();
     }
 }
