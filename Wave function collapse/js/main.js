@@ -80,36 +80,36 @@ function randomPick(tab) {
     }
     return -1;
 }
-function collapse(grille) {
-    if (!finished) {
-        
-        let min = 999;
-        for (let i = 0; i < grille.grille.length; i++) {
-            if (grille.grille[i].pickedTile == -1) {
-                if (grille.grille[i].options.length < min) {
-                    min = grille.grille[i].options.length;
-                    cellLeft.splice(0);
-                    cellLeft.push(i);
-                } else if (grille.grille[i].options.length == min) {
-                    cellLeft.push(i);
-                }
+//return une des cellules (aléatoirement) parmis celle avec le moins d'entropie
+function minEntropy(grille){
+    let min = 999;
+    for (let i = 0; i < grille.grille.length; i++) {
+        if (grille.grille[i].pickedTile == -1) {
+            if (grille.grille[i].options.length < min) {
+                min = grille.grille[i].options.length;
+                cellLeft.splice(0);
+                cellLeft.push(i);
+            } else if (grille.grille[i].options.length == min) {
+                cellLeft.push(i);
             }
         }
+    }
+    let rand = Math.random() * cellLeft.length | 0;
+    let random = cellLeft[rand];
+    cellLeft.splice(0);
+    return random;
+}
+function collapse(grille) {
         if (counter == grille.grille.length) {
             console.log("reset time !");
             finished = true;
         } else {
-            counter++;
-
-            let rand = Math.random() * cellLeft.length | 0;
-            let random = cellLeft[rand];
-
-            cellLeft.splice(0);
+            let random = minEntropy(grille);
             let selectedOption = randomPick(grille.grille[random].options);
             grille.grille[random].pickedTile = selectedOption;
             reduceEntropy(random);
+            counter++;
         }
-    }
 }
 
 function reduceEntropy(index) {
